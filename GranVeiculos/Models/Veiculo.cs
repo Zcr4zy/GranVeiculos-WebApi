@@ -24,7 +24,7 @@ namespace GranVeiculos.Models
         [Column(TypeName = "numeric(10,2)")]
         public decimal Valor { get; set; }
 
-        [StringLength(100, ErrorMessage = "Insira a placa do veículo!")]
+        [StringLength(7, ErrorMessage = "O tamanho máximo para o campo placa é 7 caracteres")]
         public string Placa { get; set;} 
 
 
