@@ -14,14 +14,14 @@ builder.Services.AddControllers();
 
 builder.Services.AddOpenApi();
 
-// builder.Services.AddSwaggerGen(c =>
-//     c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-//     {
-//         Title = "",
-//         Version = "v1",
-//         Description = "Documentação da API"
-//     });
-// );
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo {
+        Title = "GranVeiculos",
+        Version = "v1",
+        Description = "Documentação da API",
+    });
+});
 
 var app = builder.Build();
 
@@ -31,10 +31,18 @@ using (var scope = app.Services.CreateScope())
     await dbContext.Database.EnsureCreatedAsync();
 }
 
+
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "GranVeiculos API v1");
+    });
 }
 
 app.UseHttpsRedirection();
