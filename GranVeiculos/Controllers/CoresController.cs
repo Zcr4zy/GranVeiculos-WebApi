@@ -12,17 +12,19 @@ namespace GranVeiculos.Controllers
     [Route("api/[controller]")]
     public class CoresController(AppDbContext db) : ControllerBase
     {
+        private readonly AppDbContext _db = db;
+
         [HttpGet]
         public IActionResult Get()
         {
-            List<Cor> cores = db.Cores.ToList();
+            List<Cor> cores = _db.Cores.ToList();
             return Ok(cores);
         }
 
         [HttpGet("{CodigoCor}")]
-        public IActionResult GetById(int codigoCor)
+        public IActionResult GetById(int CodigoCor)
         {
-            Cor cor = db.Cores.Where(w => w.CodigoCor == codigoCor).FirstOrDefault();
+            Cor cor = _db.Cores.Where(w => w.CodigoCor == CodigoCor).FirstOrDefault();
             if (cor == null)
                 return NotFound();
             return Ok(cor);
@@ -32,28 +34,30 @@ namespace GranVeiculos.Controllers
         public IActionResult CreateCor([FromBody] Cor cor)
         {
             if (!ModelState.IsValid)
-                return BadRequest("ERRO!");
-            db.Cores.Add(cor);
-            db.SaveChanges();
-            return Ok(cor);
+                return BadRequest("ERRO! Cor Informada Com Problemas");
+            _db.Cores.Add(cor);
+            _db.SaveChanges();
+            return CreatedAtAction(nameof(Get), cor.CodigoCor, new {cor});
         }
 
         [HttpPut("{CodigoCor}")]
         public IActionResult UpdateCor([FromBody] Cor cor, int CodigoCor)
         {
             if (!ModelState.IsValid || CodigoCor != cor.CodigoCor)
-                return BadRequest("ERRO!");
-            db.Cores.Update(cor);
-            db.SaveChanges();
+                return BadRequest("ERRO! Cor Informada Com Problemas");
+            _db.Cores.Update(cor);
+            _db.SaveChanges();
             return NoContent();
         }
 
         [HttpDelete("{CodigoCor}")]
         public IActionResult DeleteCor(int CodigoCor)
         {
-            var cor = db.Cores.Where(w => w.CodigoCor == CodigoCor).FirstOrDefault();
-            db.Cores.Remove(cor);
-            db.SaveChanges();
+            var cor = _db.Cores.Where(w => w.CodigoCor == CodigoCor).FirstOrDefault();
+            if (cor == null)
+                return NotFound("Cor Não Encontrada!");
+            _db.Cores.Remove(cor);
+            _db.SaveChanges();
             return NoContent();
         } 
     }
